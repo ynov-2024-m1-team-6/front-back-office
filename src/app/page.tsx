@@ -5,7 +5,7 @@ import Input from "./components/input";
 import AuthService from "./services/authService";
 import UserService from "./services/userService";
 import connectionValidators from "./services/validators/connectionValidator";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Index() {
@@ -13,9 +13,7 @@ export default function Index() {
   const [password, setPassword] = useState<string>();
   const [error, setError] = useState<string | null>();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const next = searchParams.get("next") ?? "";
 
   const [isConnected, setIsConnected] = useState<Boolean>(false);
   const [isLoading, setIsLoading] = useState<Boolean>(true);
@@ -48,9 +46,7 @@ export default function Index() {
       if (err) {
         setError(err);
       } else {
-        if (next) {
-          router.push(`/admin/dashboard`);
-        } else {
+    {
           router.push("/admin/dashboard");
         }
       }
@@ -83,12 +79,6 @@ export default function Index() {
         </form>
         {error && <p className="text-red-600">{error}</p>}
         <p className="mt-5 text-center text-sm text-gray-500">
-          <a
-            href={`/register?next=${next}`}
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2"
-          >
-            S&apos;incrire
-          </a>
         </p>
       </div>
     </div>
