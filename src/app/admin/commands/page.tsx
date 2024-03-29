@@ -92,7 +92,7 @@ const CommandsPage = () => {
                       className="p-2 text-red-500 hover:text-red-700 hover:bg-gray-300 rounded-full relative"
                     >
                       <span className="flex items-center justify-center">
-                        <MdOutlineAttachMoney  onClick={() => CommandService.refundedCommand(command.orderNumber)} /> 
+                        <MdOutlineAttachMoney onClick={() => { CommandService.refundedCommand(command.orderNumber); window.location.reload(); }} /> 
                       </span>
                     </button>
                   )}
