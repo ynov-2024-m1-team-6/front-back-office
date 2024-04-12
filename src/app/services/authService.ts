@@ -29,7 +29,7 @@ const login = async (
     if (!response.ok) {
       return responseJson.message;
     }
-    localStorage.setItem("token", responseJson.data);
+    localStorage.setItem("tokenAdmin", responseJson.data);
     return null;
   } catch (error) {
     throw error;
@@ -72,7 +72,7 @@ const register = async (
       return responseJson.message;
     }
 
-    localStorage.setItem("token", responseJson.data);
+    localStorage.setItem("tokenAdmin", responseJson.data);
     return null;
   } catch (error) {
     throw error;

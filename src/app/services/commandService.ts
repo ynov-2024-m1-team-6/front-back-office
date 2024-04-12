@@ -1,7 +1,7 @@
 import { Command } from "../models/command";
 import UserService from "./userService";
 
-const getAllCommands = async (): Promise<Command[] | null> => {
+const getAllCommands = async () => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}command/getCommands`,
     {
@@ -13,7 +13,7 @@ const getAllCommands = async (): Promise<Command[] | null> => {
   );
   const commands = await res.json();
   console.log(commands);
-  return commands.data as Command[];
+  return commands.data;
 };
 
 const askForReimbursment = async (
@@ -51,22 +51,20 @@ const getFilteredCommands = async (
 };
 
 const refundedCommand = async (orderNumber: string): Promise<void> => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}stripe/refund`,
-    {
-      method: "POST",
-      body: JSON.stringify({ paymentId: orderNumber }),
-      headers: {
-        Authorization: `Bearer ${UserService.getToken()}`,
-        "Content-Type": "application/json",
-      },
-    });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}stripe/refund`, {
+    method: "POST",
+    body: JSON.stringify({ paymentId: orderNumber }),
+    headers: {
+      Authorization: `Bearer ${UserService.getToken()}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 const CommandService = {
   getAllCommands,
   getFilteredCommands,
   askForReimbursment,
-  refundedCommand
+  refundedCommand,
 };
 export default CommandService;

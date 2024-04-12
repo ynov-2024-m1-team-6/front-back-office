@@ -14,7 +14,6 @@ export default function Index() {
   const [error, setError] = useState<string | null>();
   const router = useRouter();
 
-
   const [isConnected, setIsConnected] = useState<Boolean>(false);
   const [isLoading, setIsLoading] = useState<Boolean>(true);
 
@@ -46,7 +45,7 @@ export default function Index() {
       if (err) {
         setError(err);
       } else {
-    {
+        {
           router.push("/admin/dashboard");
         }
       }
@@ -78,8 +77,7 @@ export default function Index() {
           />
         </form>
         {error && <p className="text-red-600">{error}</p>}
-        <p className="mt-5 text-center text-sm text-gray-500">
-        </p>
+        <p className="mt-5 text-center text-sm text-gray-500"></p>
       </div>
     </div>
   ) : (

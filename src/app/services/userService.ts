@@ -30,7 +30,7 @@ const isAdmin = (): boolean => {
 const getToken = (): string | null => {
   try {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("token");
+      return localStorage.getItem("tokenAdmin");
     }
     return null;
   } catch (error) {
@@ -39,8 +39,18 @@ const getToken = (): string | null => {
 };
 
 const logout = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem("tokenAdmin");
 };
 
 const UserService = { currentUser, isAdmin, getToken, logout };
 export default UserService;
+
+export const getUser = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}user/admin`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${UserService.getToken()}`,
+    },
+  });
+  return res.json();
+};

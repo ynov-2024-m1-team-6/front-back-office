@@ -1,98 +1,84 @@
 "use client";
-
-import React, { useEffect, useState } from "react";
-import { FiHome, FiUsers, FiTable } from "react-icons/fi";
-import { usePathname, useRouter } from "next/navigation";
-import UserService from "../services/userService";
+import React, { useState } from "react";
+import { FiHome, FiUsers, FiTable, FiLogOut } from "react-icons/fi";
+import { usePathname } from "next/navigation";
 import { FaShoppingBag } from "react-icons/fa";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
+import { useRouter } from "next/navigation";
+import Logo from "../../../public/logo2.svg";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const [isAdmin, setIsAdmin] = useState<Boolean>(true);
+  const [isAdmin, setIsAdmin] = useState(true);
+  const pathname = usePathname();
   const router = useRouter();
 
-
-  const pathname = usePathname();
+  const handleLogout = () => {
+    localStorage.removeItem("tokenAdmin");
+    router.push("/");
+  };
 
   return isAdmin ? (
-    <div className="flex h-screen bg-gray-100  overflow-hidden">
-      <div className="bg-whitetext-black w-64 border-r-2 border-gray-600 border">
-        <div className="p-5 font-semibold">Uber Bagarre</div>
-        <ul>
-          <li>
-            <a href="/admin/dashboard">
-              <p
-                className={`flex text items-center justify-start p-4 rounded-lg m-2 ${
-                  pathname == "/admin/dashboard"
-                    ? "text-white bg-black"
-                    : "bg-slate-300"
-                }`}
-              >
-                <FiTable className="mr-2" />
-                <span>Dashboard</span>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a href="/admin/product">
-              <p
-                className={`flex text items-center justify-start p-4 rounded-lg m-2 ${
-                  pathname == "/admin/product"
-                    ? "text-white bg-black"
-                    : "bg-slate-300"
-                }`}
-              >
-                <FiHome className="mr-2" />
-                <span>Produits</span>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a href="/admin/users">
-              <p
-                className={`flex items-center justify-start p-4 rounded-lg m-2 ${
-                  pathname == "/admin/users"
-                    ? "text-white bg-black"
-                    : "bg-slate-300 text-black"
-                }`}
-              >
-                <FiUsers className="mr-2" />
-                <span>Utilisateurs</span>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a href="/admin/commands">
-              <p
-                className={`flex items-center justify-start p-4 rounded-lg m-2 ${
-                  pathname == "/admin/commands"
-                    ? "text-white bg-black"
-                    : "bg-slate-300 text-black"
-                }`}
-              >
-                <FaShoppingBag className="mr-2" />
-                <span>Commandes</span>
-              </p>
-            </a>
-          </li>
-          <li>
-            <a href="https://uber-bagarre.vercel.app">
-              <p
-                className={`flex items-center justify-start p-4 rounded-lg m-2 text-black bg-gray-50`}
-              >
-                <IoIosArrowDropleftCircle className="mr-2" />
-                <span>Retour au shop</span>
-              </p>
-            </a>
-          </li>
-        </ul>
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
+      <div className="flex flex-col justify-between bg-white text-black w-[250px] border-r-2 border-gray-300 h-full">
+        <div>
+          <div className="flex justify-center items-center p-4 font-semibold text-xl">
+            <img src={"/logo.svg"} width={50} height={50} />
+            Uber Bagarre
+          </div>
+          <ul className="mx-4">
+            {[
+              {
+                path: "/admin/dashboard",
+                icon: <FiTable />,
+                label: "Dashboard",
+              },
+              { path: "/admin/product", icon: <FiHome />, label: "Produits" },
+              {
+                path: "/admin/users",
+                icon: <FiUsers />,
+                label: "Utilisateurs",
+              },
+              {
+                path: "/admin/commands",
+                icon: <FaShoppingBag />,
+                label: "Commandes",
+              },
+              {
+                path: "https://uberbagarre.netlify.app/",
+                icon: <IoIosArrowDropleftCircle />,
+                label: "Retour au shop",
+              },
+            ].map((item, index) => (
+              <li key={index} className="flex items-center mx-1 p-1">
+                <a href={item.path} className="w-full">
+                  <div
+                    className={`flex items-center justify-around p-3 rounded-lg ${
+                      pathname === item.path
+                        ? "text-white bg-black"
+                        : "hover:bg-slate-300"
+                    }`}
+                  >
+                    {item.icon}
+                    <span className="flex-1 text-center">{item.label}</span>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div
+          onClick={() => handleLogout()}
+          className="flex justify-center items-center p-4 hover:underline  hover:text-red-500"
+        >
+          <FiLogOut />
+          <button className="ml-2 decoration-2 underline-offset-4 ">
+            Log Out
+          </button>
+        </div>
       </div>
-
-      <div className="flex-1 p-5 overflow-y-auto">{children}</div>
+      <div className="flex-1 p-5  bg-white overflow-y-auto">{children}</div>
     </div>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 export default Layout;

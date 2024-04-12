@@ -6,16 +6,19 @@ import { MdOutlineAttachMoney } from "react-icons/md";
 import { Status } from "../../models/status";
 import CommandService from "../../services/commandService";
 import UserService from "../../services/userService";
+import Loader from "@/app/components/loader";
 
 const CommandsPage = () => {
   const [searchName, setSearchName] = useState("email");
   const [searchValue, setSearchValue] = useState("");
   const [commands, setCommands] = useState<Command[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getCommands = async () => {
     const allCommands = await CommandService.getAllCommands();
     if (allCommands) {
       setCommands(allCommands);
+      setIsLoading(false);
     }
   };
 
@@ -31,7 +34,7 @@ const CommandsPage = () => {
 
   const refundedCommand = async (orderNumber: string) => {
     await CommandService.refundedCommand(orderNumber);
-  }
+  };
 
   useEffect(() => {
     getCommands();
@@ -61,47 +64,60 @@ const CommandsPage = () => {
           onClick={() => filterCommands()}
         />
       </div>
-      <div className="overflow-x-auto rounded-lg border border--2">
-        <table className="w-full text-left rounded-lg overflow-hidden">
-          <thead className="bg-black text-white">
-            <tr>
-              <th className="p-3">Id</th>
-              <th className="p-3">Numéro</th>
-              <th className="p-3">Statut</th>
-              <th className="p-3">Date</th>
-              <th className="p-3">Email utilisateur</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {commands.map((command) => (
-              <tr key={command.id} className="hover:bg-gray-100 group">
-                <td className="p-3 whitespace-nowrap">{command.id}</td>
-                <td className="p-3 whitespace-nowrap">{command.orderNumber}</td>
-                <td className="p-3 whitespace-nowrap">{command.status}</td>
-                <td className="p-3 whitespace-nowrap">
-                  {new Date(command.date).getDate()}/
-                  {new Date(command.date).getMonth() + 1}/
-                  {new Date(command.date).getFullYear()}
-                </td>
-                <td>{command.email}</td>
-                <td>
-                  {command.status === Status.REIMBURSEMENT && (
-                    <button
-                      title="Rembourser"
-                      className="p-2 text-red-500 hover:text-red-700 hover:bg-gray-300 rounded-full relative"
-                    >
-                      <span className="flex items-center justify-center">
-                        <MdOutlineAttachMoney onClick={() => { CommandService.refundedCommand(command.orderNumber); window.location.reload(); }} /> 
-                      </span>
-                    </button>
-                  )}
-                </td>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border--2">
+          <table className="w-full text-left rounded-lg overflow-hidden">
+            <thead className="bg-black text-white">
+              <tr>
+                <th className="p-3">Id</th>
+                <th className="p-3">Numéro</th>
+                <th className="p-3">Statut</th>
+                <th className="p-3">Date</th>
+                <th className="p-3">Email utilisateur</th>
+                <th className="p-3">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {commands.map((command) => (
+                <tr key={command.id} className="hover:bg-gray-100 group">
+                  <td className="p-3 whitespace-nowrap">{command.id}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {command.orderNumber}
+                  </td>
+                  <td className="p-3 whitespace-nowrap">{command.status}</td>
+                  <td className="p-3 whitespace-nowrap">
+                    {new Date(command.date).getDate()}/
+                    {new Date(command.date).getMonth() + 1}/
+                    {new Date(command.date).getFullYear()}
+                  </td>
+                  <td>{command.email}</td>
+                  <td>
+                    {command.status === Status.REIMBURSEMENT && (
+                      <button
+                        title="Rembourser"
+                        className="p-2 text-red-500 hover:text-red-700 hover:bg-gray-300 rounded-full relative"
+                      >
+                        <span className="flex items-center justify-center">
+                          <MdOutlineAttachMoney
+                            onClick={() => {
+                              CommandService.refundedCommand(
+                                command.orderNumber
+                              );
+                              window.location.reload();
+                            }}
+                          />
+                        </span>
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
