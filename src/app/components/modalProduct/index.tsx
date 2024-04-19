@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { Product } from "../../models/product";
 import UserService from "../../services/userService";
 import React, { useState } from "react";
@@ -6,9 +7,10 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   productData: Product;
+  isEdit: boolean;
 }
 
-const ModalProduct = ({ onClose, isOpen, productData }: Props) => {
+const ModalProduct = ({ onClose, isOpen, productData, isEdit }: Props) => {
   interface Props {
     isOpen: boolean;
     onClose: () => void;
@@ -22,7 +24,7 @@ const ModalProduct = ({ onClose, isOpen, productData }: Props) => {
   };
 
   const handleSaveClick = async () => {
-    if (productData.id === 0) {
+    if (isEdit === false) {
       const productDataWithoutId = { ...productData };
       if (productDataWithoutId.id) {
         delete productDataWithoutId.id;
@@ -40,6 +42,7 @@ const ModalProduct = ({ onClose, isOpen, productData }: Props) => {
       );
       if (res.ok) {
         closeModal();
+        toast.success("Produit ajouté");
         setTimeout(() => {
           setValide(false);
         }, 3000);
@@ -57,6 +60,7 @@ const ModalProduct = ({ onClose, isOpen, productData }: Props) => {
         }
       );
       if (res.ok) {
+        toast.success("Produit modifié");
         closeModal();
         setTimeout(() => {
           setValide(false);
@@ -84,7 +88,7 @@ const ModalProduct = ({ onClose, isOpen, productData }: Props) => {
       onClick={closeModal}
     >
       <div
-        className="w-[700px] h-[800px] bg-white p-4 rounded-md modal_content"
+        className=" bg-white p-4  m-4 rounded-md modal_content"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex flex-shrink-0 items-center justify-between rounded-t-md border-b border-neutral-200 p-4 dark:border-neutral-500">
