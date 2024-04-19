@@ -1,5 +1,7 @@
 import { User } from "../../models/user";
 import React, { useEffect, useState } from "react";
+import UserService from "../../services/userService";
+import { toast } from "sonner";
 
 interface Props {
   isOpen: boolean;
@@ -8,8 +10,7 @@ interface Props {
 }
 
 const ModalUser = ({ onClose, isOpen, userData }: Props) => {
-  const [formData, setFormData] = useState<User>({
-    id: 0,
+  const [formData, setFormData] = useState<Partial<User>>({
     firstName: "",
     name: "",
     mail: "",
@@ -17,8 +18,6 @@ const ModalUser = ({ onClose, isOpen, userData }: Props) => {
     zipCode: "",
     phoneNumber: "",
     city: "",
-    password: null,
-    isAdmin: false,
   });
 
   useEffect(() => {
@@ -26,19 +25,31 @@ const ModalUser = ({ onClose, isOpen, userData }: Props) => {
   }, [userData]);
 
   const updateData = async (id: number) => {
+    console.log(formData);
+
+    const buffer = {
+      firstName: formData.firstName,
+      name: formData.name,
+      mail: formData.mail,
+      adress: formData.adress,
+      zipCode: formData.zipCode,
+      phoneNumber: formData.phoneNumber,
+    };
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_BACK_OFFICE_URL}user/${id}`,
       {
         method: "PUT",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${UserService.getToken()}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(buffer),
       }
     );
     setValid(true);
     if (res.ok) {
+      toast.success("Modification Enregistrer");
       closeModal();
       setTimeout(() => {
         setValid(false);
@@ -197,13 +208,6 @@ const ModalUser = ({ onClose, isOpen, userData }: Props) => {
                   Enregistrer
                 </div>
               </div>
-              {valid && (
-                <div className="h-[40px] flex items-center justify-center bg-green-500  bg-opacity-25 rounded mb-10">
-                  <p className="text-center text-green-500">
-                    Modification Enregistrer
-                  </p>
-                </div>
-              )}
             </form>
           </div>
         </div>
