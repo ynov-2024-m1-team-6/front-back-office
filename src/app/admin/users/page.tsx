@@ -6,6 +6,18 @@ import UserService from "../../services/userService";
 import { User } from "../../models/user";
 import Loader from "@/app/components/loader";
 
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 const UsersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +34,7 @@ const UsersPage = () => {
       },
     });
     const data = await res.json();
+    toast.error("Utilisateur supprimé");
     setUserData(usersData.filter((user) => user.id !== id));
   };
 
@@ -80,7 +93,7 @@ const UsersPage = () => {
           <table className="w-full text-left rounded-lg overflow-hidden">
             <thead className="bg-black text-white">
               <tr>
-                <th className="p-3">Nom</th>
+                <th className="p-">Nom</th>
                 <th className="p-3">Prénom</th>
                 <th className="p-3">Adresse Mail</th>
                 <th className="p-3">Adresse</th>
@@ -93,7 +106,7 @@ const UsersPage = () => {
               {filteredUsers &&
                 filteredUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-gray-100 group">
-                    <td className="p-3 whitespace-nowrap">{user.name}</td>
+                    <td className="p- whitespace-nowrap">{user.name}</td>
                     <td className="p-3 whitespace-nowrap">{user.firstName}</td>
                     <td className="p-3 whitespace-nowrap">{user.mail}</td>
                     <td className="p-3 whitespace-nowrap">{user.adress}</td>
@@ -109,14 +122,35 @@ const UsersPage = () => {
                             <FiEdit2 />
                           </span>
                         </button>
-                        <button
-                          className="p-2 text-red-500 hover:text-red-700 hover:bg-gray-300 rounded-full relative"
-                          onClick={() => fetchDeleteUser(user.id)}
-                        >
-                          <span className="flex items-center justify-center">
-                            <FiTrash2 />
-                          </span>
-                        </button>
+                        <Dialog>
+                          <DialogTrigger>
+                            {" "}
+                            <FiTrash2 color="red" />
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>
+                                Confirmation de suppression
+                              </DialogTitle>
+
+                              <DialogDescription>
+                                {" "}
+                                Voulez-vous supprimer : {user.firstName} ?{" "}
+                                <br></br>
+                                Cette action est définitve
+                                <DialogFooter>
+                                  <Button
+                                    type="submit"
+                                    variant="destructive"
+                                    onClick={() => fetchDeleteUser(user.id)}
+                                  >
+                                    Supprimer
+                                  </Button>
+                                </DialogFooter>
+                              </DialogDescription>
+                            </DialogHeader>
+                          </DialogContent>
+                        </Dialog>
                       </div>
                     </td>
                   </tr>

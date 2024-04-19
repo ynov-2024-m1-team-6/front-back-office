@@ -70,13 +70,6 @@ function Dashboard() {
       }
     );
   }, []);
-
-  const orders = [
-    { id: 1, orderNumber: "00000001", date: "2024-04-12T09:20:00.000Z" },
-    { id: 2, orderNumber: "00000002", date: "2024-04-12T12:08:05.275Z" }, // Example if today was 2024-04-12
-    { id: 3, orderNumber: "00000003", date: "2023-12-24T16:30:00.000Z" },
-  ];
-
   const numberOfOrdersThisMonth = commands.filter((order: Command) => {
     const orderDate = new Date(order.date);
     const today = new Date();
@@ -120,7 +113,7 @@ function Dashboard() {
               <div className="bg-[#fafafa]   rounded-lg p-4 sm:p-6 xl:p-8 ">
                 <h2 className="text-xl font-semibold mb-4">Last user</h2>
                 <ul className="list-disc list-inside">
-                  {users.slice(-4).map((user: any) => (
+                  {users.slice(0, 4).map((user: any) => (
                     <li key={user.id}>
                       {user.name} - {user.mail}
                     </li>

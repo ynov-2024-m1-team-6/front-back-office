@@ -7,6 +7,7 @@ import UserService from "./services/userService";
 import connectionValidators from "./services/validators/connectionValidator";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Index() {
   const [email, setEmail] = useState<string>();
@@ -46,6 +47,7 @@ export default function Index() {
         setError(err);
       } else {
         {
+          toast.success("Connecté");
           router.push("/admin/dashboard");
         }
       }
@@ -60,20 +62,13 @@ export default function Index() {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" action="#" method="POST">
           <Input title="Email" name="email" onChange={setEmail} />
-          <Input
-            title="Mot de passe"
-            name="password"
-            link={{
-              title: "Mot de passe oublié",
-              href: "/",
-            }}
-            onChange={setPassword}
-          />
+          <Input title="Mot de passe" name="password" onChange={setPassword} />
 
           <Button
             title="Se connecter"
             onClick={onSubmit}
             disabled={isLoading}
+            type="submit"
           />
         </form>
         {error && <p className="text-red-600">{error}</p>}

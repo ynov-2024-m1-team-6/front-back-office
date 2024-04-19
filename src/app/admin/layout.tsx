@@ -22,7 +22,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex flex-col justify-between bg-white text-black w-[250px] border-r-2 border-gray-300 h-full">
         <div>
           <div className="flex justify-center items-center p-4 font-semibold text-xl">
-            <img src={"/logo.svg"} width={50} height={50} />
+            <img src={"/logo.svg"} width={40} height={40} />
             Uber Bagarre
           </div>
           <ul className="mx-4">

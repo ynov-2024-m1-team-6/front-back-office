@@ -6,6 +6,19 @@ import Modal from "../../components/modalProduct";
 import UserService from "../../services/userService";
 import { Product } from "../../models/product";
 import Loader from "@/app/components/loader";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { CirclePlus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +26,7 @@ const ProductsPage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productsData, setProductsData] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [getIsEdit, setIsedit] = useState(false);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -32,12 +46,13 @@ const ProductsPage = () => {
     getProducts();
   }, []);
 
-  const handleEditProduct = (product: Product) => {
+  const handleEditProduct = (product: Product, isEdit: boolean) => {
+    setIsedit(isEdit);
     setSelectedProduct(product);
     setShowModal(true);
   };
 
-  const handleAddProduct = () => {
+  const handleAddProduct = (isEdit: boolean) => {
     const product = {
       id: 0,
       username: "",
@@ -49,6 +64,7 @@ const ProductsPage = () => {
       thumbnail: "",
       active: false,
     };
+    setIsedit(isEdit);
     setSelectedProduct(product);
     setShowModal(true);
   };
@@ -64,6 +80,7 @@ const ProductsPage = () => {
       }
     );
     const data = await res.json();
+    toast.success("Product supprimé");
     setProductsData(
       productsData.filter((products) => products.id !== product.id)
     );
@@ -88,7 +105,7 @@ const ProductsPage = () => {
           className="p-2 border border-gray-300 rounded-lg flex-1"
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <button onClick={() => handleAddProduct()}>New product</button>
+        <CirclePlus onClick={() => handleAddProduct(false)}></CirclePlus>
       </div>
       {isLoading ? (
         <Loader />
@@ -119,13 +136,23 @@ const ProductsPage = () => {
                   <td className="p-3 whitespace-nowrap">{product.weight}</td>
                   <td className="p-3 whitespace-nowrap">{product.ratio}</td>
                   <td className="p-3 whitespace-nowrap">
-                    {product.active ? "true" : "false"}
+                    {product.active ? (
+                      <>
+                        <Badge color="green" className="bg-green-500">
+                          Active
+                        </Badge>
+                      </>
+                    ) : (
+                      <>
+                        <Badge variant="destructive">Disable</Badge>
+                      </>
+                    )}
                   </td>
                   <td className="p-3">
                     <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <button
                         className="p-2 text-blue-500 hover:text-blue-700 hover:bg-gray-300 rounded-full relative"
-                        onClick={() => handleEditProduct(product)}
+                        onClick={() => handleEditProduct(product, true)}
                       >
                         <span className="flex items-center justify-center">
                           <FiEdit2 />
@@ -133,9 +160,38 @@ const ProductsPage = () => {
                       </button>
                       <button className="p-2 text-red-500 hover:text-red-700 hover:bg-gray-300 rounded-full relative">
                         <span className="flex items-center justify-center">
-                          <FiTrash2
-                            onClick={() => handleDeleteProduct(product)}
-                          />
+                          <Dialog>
+                            <DialogTrigger>
+                              {" "}
+                              <FiTrash2 />
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>
+                                  Confirmation de suppression
+                                </DialogTitle>
+
+                                <DialogDescription>
+                                  {" "}
+                                  Voulez-vous supprimer : {
+                                    product.username
+                                  } ? <br></br>
+                                  Cette action est définitve
+                                  <DialogFooter>
+                                    <Button
+                                      type="submit"
+                                      variant="destructive"
+                                      onClick={() =>
+                                        handleDeleteProduct(product)
+                                      }
+                                    >
+                                      Supprimer
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogDescription>
+                              </DialogHeader>
+                            </DialogContent>
+                          </Dialog>
                         </span>
                       </button>
                     </div>
@@ -149,6 +205,7 @@ const ProductsPage = () => {
             isOpen={showModal}
             onClose={() => setShowModal(false)}
             productData={selectedProduct as Product}
+            isEdit={getIsEdit}
           />
         </div>
       )}
